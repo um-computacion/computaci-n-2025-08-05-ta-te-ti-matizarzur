@@ -1,0 +1,46 @@
+import unittest
+from src.models.jugador import Jugador
+
+class TestJugador(unittest.TestCase):
+
+    def setUp(self):
+        self.jugador1 = Jugador("Jorge", "X")
+        self.jugador2 = Jugador("Matias", "O")
+        
+    def test_inicializacion(self):
+        self.assertEqual(self.jugador1.nombre, "Jorge")
+        self.assertEqual(self.jugador1.simbolo, "X")
+        self.assertEqual(self.jugador2.nombre, "Matias")
+        self.assertEqual(self.jugador2.simbolo, "O")
+
+    def test_cambiar_simbolo(self):
+        self.jugador1.cambiar_simbolo("O")
+        self.assertEqual(self.jugador1.simbolo, "O")
+        self.jugador2.cambiar_simbolo("X")
+        self.assertEqual(self.jugador2.simbolo, "X")
+        
+    def test_crear_jugador(self):
+        """Debe crear jugador con nombre y símbolo"""
+        self.assertEqual(self.jugador1.nombre, "Jorge")
+        self.assertEqual(self.jugador1.simbolo, "X")
+    
+    def test_jugador_empieza_sin_movimientos(self):
+        """Debe empezar sin movimientos"""
+        self.assertEqual(self.jugador1.movimientos, [])
+    
+    def test_hacer_movimiento_devuelve_coordenadas(self):
+        """Hacer movimiento debe devolver fila y columna"""
+        fila, columna = self.jugador1.hacer_movimiento(2, 1)
+        self.assertEqual(fila, 2)
+        self.assertEqual(columna, 1)
+        
+    def test_varios_movimientos(self):
+        """Debe contar varios movimientos"""
+        self.jugador1.hacer_movimiento(0, 0)
+        self.jugador1.hacer_movimiento(1, 1) 
+        self.jugador1.hacer_movimiento(2, 2)
+        
+        self.assertEqual(self.jugador1.movimientos_realizados, 3)
+        
+if __name__ == '__main__':
+    unittest.main()
