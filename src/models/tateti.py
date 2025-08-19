@@ -1,16 +1,41 @@
 from src.models.tablero import Tablero
+from src.models.jugador import Jugador
 
 class Tateti:
-    def __init__(self):
-        self.turno = "X"
+    def __init__(self, pedir_nombres=True):
         self.tablero = Tablero()
+        
+        if pedir_nombres:
+            
+            nombre_x = Jugador.pedir_nombre(1, "X")
+            nombre_o = Jugador.pedir_nombre(2, "O")
+        else:
+            
+            nombre_x = "Jugador 1"
+            nombre_o = "Jugador 2"
+        
+        self.jugadores = {
+            "X": nombre_x,
+            "O": nombre_o
+        }
+        
+        self.turno = "X"  
         self.ganador = None
+
+    def get_nombre_turno_actual(self):
+        """Devuelve el nombre del jugador del turno actual"""
+        return self.jugadores[self.turno]
+    
+    def get_nombre_ganador(self):
+        """Devuelve el nombre del ganador"""
+        if self.ganador:
+            return self.jugadores[self.ganador]
+        return None
 
     def ocupar_una_de_las_casillas(self, fil, col):
         # pongo la ficha...
         self.tablero.poner_la_ficha(fil, col, self.turno)
-        # condicion para ganar
-        # cambia turno... va a suceder solo si se pudo poner la ficha
+        
         if self.turno == "X":
             self.turno = "O"  
         else:
@@ -52,14 +77,14 @@ class Tateti:
         return False
 
     def obtener_ganador(self):
-        """Devuelve el ganador del juego o None si no hay ganador"""
+        """Devuelve el nombre del ganador del juego o None si no hay ganador"""
         if self.hay_ganador():
-            return self.ganador
+            return self.get_nombre_ganador()
         return None
 
     def es_empate(self):
         """Verifica si el juego está en empate"""
-        # Hay empate si el tablero está lleno y no hay ganador
+        
         if not self.hay_ganador():
             for fila in self.tablero.contenedor:
                 for casilla in fila:

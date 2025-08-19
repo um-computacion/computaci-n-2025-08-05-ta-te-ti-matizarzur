@@ -20,27 +20,93 @@ class TestJugador(unittest.TestCase):
         self.assertEqual(self.jugador2.simbolo, "X")
         
     def test_crear_jugador(self):
-        """Debe crear jugador con nombre y símbolo"""
         self.assertEqual(self.jugador1.nombre, "Jorge")
         self.assertEqual(self.jugador1.simbolo, "X")
     
     def test_jugador_empieza_sin_movimientos(self):
-        """Debe empezar sin movimientos"""
         self.assertEqual(self.jugador1.movimientos, [])
     
     def test_hacer_movimiento_devuelve_coordenadas(self):
-        """Hacer movimiento debe devolver fila y columna"""
         fila, columna = self.jugador1.hacer_movimiento(2, 1)
         self.assertEqual(fila, 2)
         self.assertEqual(columna, 1)
         
     def test_varios_movimientos(self):
-        """Debe contar varios movimientos"""
         self.jugador1.hacer_movimiento(0, 0)
         self.jugador1.hacer_movimiento(1, 1) 
         self.jugador1.hacer_movimiento(2, 2)
         
         self.assertEqual(self.jugador1.movimientos_realizados, 3)
+
+    def test_jugador_empieza_con_cero_movimientos_realizados(self):
+        self.assertEqual(self.jugador1.movimientos_realizados, 0)
+        self.assertEqual(self.jugador2.movimientos_realizados, 0)
+
+    def test_hacer_movimiento_incrementa_contador(self):
+        self.assertEqual(self.jugador1.movimientos_realizados, 0)
+        self.jugador1.hacer_movimiento(0, 0)
+        self.assertEqual(self.jugador1.movimientos_realizados, 1)
+        self.jugador1.hacer_movimiento(1, 1)
+        self.assertEqual(self.jugador1.movimientos_realizados, 2)
+
+    def test_hacer_movimiento_guarda_historial(self):
+        self.jugador1.hacer_movimiento(0, 0)
+        self.jugador1.hacer_movimiento(1, 2)
+        self.jugador1.hacer_movimiento(2, 1)
         
+        expected_movimientos = [(0, 0), (1, 2), (2, 1)]
+        self.assertEqual(self.jugador1.movimientos, expected_movimientos)
+
+    def test_movimientos_en_esquinas(self):
+        esquinas = [(0, 0), (0, 2), (2, 0), (2, 2)]
+        
+        for fila, col in esquinas:
+            resultado = self.jugador1.hacer_movimiento(fila, col)
+            self.assertEqual(resultado, (fila, col))
+
+    def test_jugador_con_nombre_vacio(self):
+        jugador_sin_nombre = Jugador("", "X")
+        self.assertEqual(jugador_sin_nombre.nombre, "")
+        self.assertEqual(jugador_sin_nombre.simbolo, "X")
+
+    def test_cambiar_simbolo_multiple_veces(self):
+        self.jugador1.cambiar_simbolo("O")
+        self.assertEqual(self.jugador1.simbolo, "O")
+        self.jugador1.cambiar_simbolo("Z")
+        self.assertEqual(self.jugador1.simbolo, "Z")
+        self.jugador1.cambiar_simbolo("X")
+        self.assertEqual(self.jugador1.simbolo, "X")
+
+    def test_jugador_nombres_diferentes_son_diferentes(self):
+        jugador3 = Jugador("Ana", "X")
+        self.assertNotEqual(self.jugador1.nombre, jugador3.nombre)
+
+    def test_movimientos_no_interfieren_entre_jugadores(self):
+        self.jugador1.hacer_movimiento(0, 0)
+        self.jugador1.hacer_movimiento(1, 1)
+        
+        self.jugador2.hacer_movimiento(2, 2)
+        
+        self.assertEqual(self.jugador1.movimientos_realizados, 2)
+        self.assertEqual(self.jugador2.movimientos_realizados, 1)
+        self.assertEqual(len(self.jugador1.movimientos), 2)
+        self.assertEqual(len(self.jugador2.movimientos), 1)
+
+    def test_jugador_con_nombre_largo(self):
+        nombre_largo = "Ana María Fernández González"
+        jugador = Jugador(nombre_largo, "X")
+        self.assertEqual(jugador.nombre, nombre_largo)
+
+    def test_jugador_con_simbolos_especiales(self):
+        simbolos = ["@", "#", "$", "★", "♠", "1"]
+        for simbolo in simbolos:
+            jugador = Jugador("Test", simbolo)
+            self.assertEqual(jugador.simbolo, simbolo)
+
+    def test_hacer_movimiento_centro(self):
+        resultado = self.jugador1.hacer_movimiento(1, 1)
+        self.assertEqual(resultado, (1, 1))
+        self.assertEqual(self.jugador1.movimientos[-1], (1, 1))
+
 if __name__ == '__main__':
     unittest.main()
